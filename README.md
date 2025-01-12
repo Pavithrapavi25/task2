@@ -33,8 +33,14 @@ Setup Instructions
 Open the index.html file in any web browser to run the app.
 
 Future Enhancements
-Task Editing: Allow users to modify existing tasks.
-Local Storage: Save tasks so they persist across browser sessions.
-Priority Levels: Add functionality to mark tasks with different priority levels.
-Completion Status: Allow users to mark tasks as completed.
-
+Task Deadline Notifications: Implement notifications when a task is nearing its deadline.
+Task Sorting and Filtering: Add functionality to sort tasks by priority, deadline, or category.
+Recurring Tasks: Add an option to create tasks that recur on a daily, weekly, or monthly basis.
+User Authentication: Implement user login and registration to allow users to save their tasks across sessions.
+Priority-based Task Styling: Automatically highlight tasks based on their priority level.
+Multiple Lists: Enable users to create multiple to-do lists (e.g., Work, Personal) and switch between them.
+Export Tasks: Allow users to export their tasks as a CSV or JSON file.
+Progress Tracker: Implement a progress bar or chart showing the percentage of completed tasks.
+Mobile Responsiveness: Enhance the UI for better mobile responsiveness.
+Voice Recognition: Integrate voice commands for adding and managing tasks.
+Task Sharing: Enable users to share tasks with others via email or a link.
