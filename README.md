@@ -44,3 +44,6 @@ Progress Tracker: Implement a progress bar or chart showing the percentage of co
 Mobile Responsiveness: Enhance the UI for better mobile responsiveness.
 Voice Recognition: Integrate voice commands for adding and managing tasks.
 Task Sharing: Enable users to share tasks with others via email or a link.
+
+Output of the project:
+![Screenshot 2025-01-12 163700](https://github.com/user-attachments/assets/7b25771c-e5d3-47ce-8d6d-7362c369f2d4)
