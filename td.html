@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced To-Do List with Reminders</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode body {
+            background-color: #2e2e2e;
+            color: #f4f4f9;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 350px;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode .container {
+            background: #333;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        #todo-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        #add-btn {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #add-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #todo-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        #todo-list li {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+
+        .priority {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .category {
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        .reminder-time {
+            font-style: italic;
+            margin-left: 10px;
+            color: #007bff;
+        }
+
+        .clear-btn {
+            margin-top: 15px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .clear-btn:hover {
+            background-color: #218838;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            display: none;
+            margin-top: 5px;
+        }
+
+        #search-bar {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #dark-mode-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #6c757d;
+            color: #ffffff;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #dark-mode-btn:hover {
+            background-color: #5a6268;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <button id="dark-mode-btn">🌙</button>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <input type="text" id="search-bar" placeholder="Search tasks...">
+        <div class="input-section">
+            <input type="text" id="todo-input" placeholder="Add a new task...">
+            <button id="add-btn">Add</button>
+        </div>
+        <p class="error-message" id="error-message">Task cannot be empty!</p>
+        <ul id="todo-list"></ul>
+        <button class="clear-btn" id="clear-btn">Clear All</button>
+    </div>
+
+    <script>
+        const darkModeBtn = document.getElementById('dark-mode-btn');
+        const body = document.body;
+        const container = document.querySelector('.container');
+        let isDarkMode = false;
+
+        // Toggle Dark Mode
+        darkModeBtn.addEventListener('click', function() {
+            isDarkMode = !isDarkMode;
+            body.classList.toggle('dark-mode', isDarkMode);
+            container.classList.toggle('dark-mode', isDarkMode);
+            darkModeBtn.textContent = isDarkMode ? '🌞' : '🌙';
+        });
+
+        document.getElementById('add-btn').addEventListener('click', function() {
+            const inputField = document.getElementById('todo-input');
+            const task = inputField.value.trim();
+            const errorMessage = document.getElementById('error-message');
+
+            if (task !== '') {
+                // Hide error message if there is a valid task
+                errorMessage.style.display = 'none';
+
+                // Prompt for task details: priority, category, and reminder time
+                const category = prompt("Enter task category (e.g., Work, Personal, etc.):");
+                const priority = prompt("Set task priority (Low, Medium, High):");
+                const reminderTime = prompt("Set reminder time (yyyy-mm-dd hh:mm):");
+
+                // Convert reminder time to Date object
+                const reminderDate = new Date(reminderTime);
+
+                // Schedule the reminder notification
+                const currentTime = new Date();
+                const timeDifference = reminderDate - currentTime;
+
+                if (timeDifference > 0) {
+                    setTimeout(() => {
+                        if (Notification.permission === "granted") {
+                            new Notification("Task Reminder", {
+                                body: `Reminder: ${task}`,
+                                icon: "https://via.placeholder.com/50"
+                            });
+                        }
+                    }, timeDifference);
+                }
+
+                const taskList = document.getElementById('todo-list');
+                const listItem = document.createElement('li');
+                listItem.textContent = task;
+
+                // Add priority and category
+                const priorityText = document.createElement('span');
+                priorityText.classList.add('priority');
+                priorityText.textContent = priority ? `Priority: ${priority}` : '';
+
+                const categoryText = document.createElement('span');
+                categoryText.classList.add('category');
+                categoryText.textContent = category ? `Category: ${category}` : '';
+
+                const reminderText = document.createElement('span');
+                reminderText.classList.add('reminder-time');
+                reminderText.textContent = reminderDate ? `Reminder: ${reminderDate.toLocaleString()}` : '';
+
+                // Add buttons: edit and delete
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.classList.add('edit-btn');
+                editButton.addEventListener('click', function() {
+                    inputField.value = task;
+                    taskList.removeChild(listItem);
+                    saveTasks();
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.addEventListener('click', function() {
+                    taskList.removeChild(listItem);
+                    saveTasks();
+                });
+
+                // Append everything to the task item
+                listItem.appendChild(editButton);
+                listItem.appendChild(deleteButton);
+                listItem.appendChild(priorityText);
+                listItem.appendChild(categoryText);
+                listItem.appendChild(reminderText);
+
+                taskList.appendChild(listItem);
+                inputField.value = '';
+                saveTasks();
+            } else {
+                // Show error message if input is empty
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        function saveTasks() {
+            const tasks = [];
+            const taskListItems = document.querySelectorAll('#todo-list li');
+            taskListItems.forEach(item => {
+                tasks.push({
+                    text: item.textContent.replace('EditDelete', '').trim(),
+                    completed: item.classList.contains('completed')
+                });
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.forEach(task => {
+                const taskList = document.getElementById('todo-list');
+                const listItem = document.createElement('li');
+                listItem.textContent = task.text;
+                if (task.completed) listItem.classList.add('completed');
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.addEventListener('click', function() {
+                    taskList.removeChild(listItem);
+                    saveTasks();
+                });
+
+                listItem.appendChild(deleteButton);
+                taskList.appendChild(listItem);
+            });
+        }
+
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            document.getElementById('todo-list').innerHTML = '';
+            localStorage.removeItem('tasks');
+        });
+
+        document.getElementById('search-bar').addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const tasks = document.querySelectorAll('#todo-list li');
+            tasks.forEach(task => {
+                const taskText = task.textContent.toLowerCase();
+                task.style.display = taskText.includes(searchText) ? '' : 'none';
+            });
+        });
+
+        loadTasks();
+    </script>
+</body>
+</html>
